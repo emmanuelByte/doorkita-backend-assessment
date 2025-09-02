@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: doorkita-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: doorkita_db
+      POSTGRES_USER: doorkita_user
+      POSTGRES_PASSWORD: doorkita_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - doorkita-network
+
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: doorkita-app
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: doorkita_db
+      DATABASE_USER: doorkita_user
+      DATABASE_PASSWORD: doorkita_password
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - doorkita-network
+    volumes:
+      - .:/app
+    entrypoint: >
+      /bin/sh -c "
+        until nc -z -v -w30 postgres 5432; do
+          echo 'Waiting for PostgreSQL...';
+          sleep 1;
+        done;
+        echo 'PostgreSQL is up, starting app...';
+        yarn start:prod;
+      "
+
+volumes:
+  postgres_data:
+
+networks:
+  doorkita-network:
+    driver: bridge
