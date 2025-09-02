@@ -14,6 +14,7 @@ import { Result } from './results/entities/result.entity';
 import { ResultsModule } from './results/results.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { CustomLoggerService } from './utils/logger.service';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { UsersModule } from './users/users.module';
   controllers: [AppController],
   providers: [
     AppService,
+    CustomLoggerService,
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditLogInterceptor,

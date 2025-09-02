@@ -10,18 +10,25 @@ import { Response } from 'express';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import type { IUserRequest } from 'src/types/express';
+import { CustomLoggerService } from '../utils/logger.service';
 import { AuditLogsService } from './audit-logs.service';
 import { AuditAction, ResourceType } from './entities/audit-log.entity';
 
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
-  constructor(private readonly auditLogsService: AuditLogsService) {}
+  constructor(
+    private readonly auditLogsService: AuditLogsService,
+    private readonly logger: CustomLoggerService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<IUserRequest>();
     const response = context.switchToHttp().getResponse<Response>();
     const startTime = Date.now();
-    const user = request.user!;
+    const user = request.user;
+    if (!user) {
+      return next.handle();
+    }
     // Extract user information from JWT
     const userId = user?.id;
     const userRole = user?.role;
@@ -66,7 +73,12 @@ export class AuditLogInterceptor implements NestInterceptor {
               responseTime,
             )
             .catch((error) => {
-              console.error('Failed to log audit entry:', error);
+              this.logger.errorWithMeta(
+                'Failed to log audit entry',
+                error instanceof Error ? error : undefined,
+                { userId, userRole, action, resourceType },
+                'AuditLogInterceptor',
+              );
             });
         },
         error: (error: HttpException) => {
@@ -92,7 +104,12 @@ export class AuditLogInterceptor implements NestInterceptor {
               responseTime,
             )
             .catch((logError) => {
-              console.error('Failed to log audit entry:', logError);
+              this.logger.errorWithMeta(
+                'Failed to log audit entry',
+                logError instanceof Error ? logError : undefined,
+                { userId, userRole, action, resourceType },
+                'AuditLogInterceptor',
+              );
             });
         },
       }),
