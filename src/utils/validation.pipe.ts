@@ -34,7 +34,7 @@ export class ValidationPipe implements PipeTransform<unknown, unknown> {
 
     const object = plainToClass(metatype, value) as object;
     const errors = await validate(object);
-    console.log(errors, 'errors');
+
     if (errors.length > 0) {
       const validationErrors = errors.map((error) => {
         const constraints = error.constraints as Record<string, string>;
@@ -73,15 +73,15 @@ export class ValidationPipe implements PipeTransform<unknown, unknown> {
         };
       });
 
-      const errorMessage = 'Validation failed';
+      // const errorMessage = 'Validation failed';
 
-      // Log validation errors for debugging
-      this.logger.errorWithMeta(
-        errorMessage,
-        undefined,
-        { validationErrors },
-        'ValidationPipe',
-      );
+      // // Log validation errors for debugging
+      // this.logger.errorWithMeta(
+      //   errorMessage,
+      //   undefined,
+      //   { validationErrors },
+      //   'ValidationPipe',
+      // );
 
       throw new BadRequestException(
         ApiResponse.validationError({

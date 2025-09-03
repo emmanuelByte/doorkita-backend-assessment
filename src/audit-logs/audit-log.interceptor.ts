@@ -37,6 +37,11 @@ export class AuditLogInterceptor implements NestInterceptor {
     const method = request.method;
     const url = request.url;
 
+    const includedModules = ['/lab-orders', '/results'];
+    if (!includedModules.includes(url)) {
+      return next.handle();
+    }
+
     // Extract IP address and user agent - using Express Request properties
     const ipAddress = request.ip || (request.socket?.remoteAddress as string);
     const userAgent = request.headers['user-agent'] as string;
