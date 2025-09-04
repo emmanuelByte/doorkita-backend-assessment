@@ -26,12 +26,15 @@ export class AuditLogInterceptor implements NestInterceptor {
     const response = context.switchToHttp().getResponse<Response>();
     const startTime = Date.now();
     const user = request.user;
+
+    // If no user is present, skip audit logging
     if (!user) {
       return next.handle();
     }
+
     // Extract user information from JWT
-    const userId = user?.id;
-    const userRole = user?.role;
+    const userId = user.id;
+    const userRole = user.role;
 
     // Extract request information
     const method = request.method;

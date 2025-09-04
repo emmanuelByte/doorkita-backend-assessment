@@ -10,6 +10,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -32,7 +33,8 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'Register a new user',
-    description: 'Create a new user account with email, password, and role',
+    description:
+      'Create a new user account with email, password, and role. Available roles: doctor, lab, patient',
   })
   @ApiBody({
     type: RegisterDto,
@@ -43,7 +45,7 @@ export class AuthController {
     type: AuthResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Invalid registration data',
+    description: 'Invalid registration data or user already exists',
   })
   @Post('register')
   async register(
@@ -60,7 +62,8 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'User login',
-    description: 'Authenticate user with email and password',
+    description:
+      'Authenticate user with email and password to receive JWT token',
   })
   @ApiBody({
     type: LoginDto,
@@ -71,7 +74,7 @@ export class AuthController {
     type: AuthResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Invalid credentials',
+    description: 'Invalid email or password',
   })
   @Post('login')
   async login(
@@ -89,7 +92,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Get user profile',
     description:
-      'Get current user profile information (requires authentication)',
+      'Get current user profile information (requires authentication). Accessible by all roles: doctor, lab, patient',
   })
   @ApiBearerAuth('JWT-auth')
   @ApiOkResponse({
@@ -98,6 +101,9 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing JWT token',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden - Invalid user role',
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
   // GET request can be accessed by all roles

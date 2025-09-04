@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { securityConfig } from './config/security.config';
 import { GlobalExceptionFilter } from './utils/exception.filter';
 import { HttpLoggingInterceptor } from './utils/http-logging.interceptor';
 import { CustomLoggerService } from './utils/logger.service';
@@ -8,6 +12,32 @@ import { ValidationPipe } from './utils/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {});
+
+  // Security middleware
+  app.use(helmet(securityConfig.helmet));
+
+  // CORS configuration
+  app.enableCors(securityConfig.cors);
+
+  // Rate limiting
+  app.use(
+    rateLimit({
+      windowMs: securityConfig.rateLimit.windowMs,
+      max: securityConfig.rateLimit.max,
+      message: securityConfig.rateLimit.message,
+      standardHeaders: securityConfig.rateLimit.standardHeaders,
+      legacyHeaders: securityConfig.rateLimit.legacyHeaders,
+    }),
+  );
+
+  // Slow down for brute force protection
+  app.use(
+    slowDown({
+      windowMs: securityConfig.slowDown.windowMs,
+      delayAfter: securityConfig.slowDown.delayAfter,
+      delayMs: () => securityConfig.slowDown.delayMs,
+    }),
+  );
 
   // Global exception filter
   app.useGlobalFilters(new GlobalExceptionFilter());

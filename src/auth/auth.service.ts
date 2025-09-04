@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -6,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
+import { PasswordValidator } from '../utils/password.validator';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -16,6 +18,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private passwordValidator: PasswordValidator,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
@@ -25,8 +28,19 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
+    // Validate password strength
+    const passwordValidation = this.passwordValidator.validate(
+      registerDto.password,
+    );
+    if (!passwordValidation.isValid) {
+      throw new BadRequestException({
+        message: 'Password validation failed',
+        errors: passwordValidation.errors,
+      });
+    }
+
     // Hash password
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+    const hashedPassword = await bcrypt.hash(registerDto.password, 12);
 
     // Create user
     const user = await this.usersService.create({
@@ -82,7 +96,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(userId: number): Promise<UserWithoutPassword | null> {
+  async validateUser(userId: string): Promise<UserWithoutPassword | null> {
     try {
       const user = await this.usersService.findOne(userId);
       const { password, ...userWithoutPassword } = user;

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,19 +9,23 @@ import { AuditLogInterceptor } from './audit-logs/audit-log.interceptor';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { AuditLog } from './audit-logs/entities/audit-log.entity';
 import { AuthModule } from './auth/auth.module';
+import { securityConfig } from './config/security.config';
 import { LabOrder } from './lab-orders/entities/lab-order.entity';
 import { LabOrdersModule } from './lab-orders/lab-orders.module';
 import { Result } from './results/entities/result.entity';
 import { ResultsModule } from './results/results.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { HealthController } from './utils/health.controller';
 import { CustomLoggerService } from './utils/logger.service';
+import { CustomThrottlerGuard } from './utils/rate-limit.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot(securityConfig.throttler),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -42,13 +47,17 @@ import { CustomLoggerService } from './utils/logger.service';
     ResultsModule,
     AuditLogsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     AppService,
     CustomLoggerService,
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditLogInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
     },
   ],
 })

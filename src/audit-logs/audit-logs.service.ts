@@ -25,7 +25,7 @@ export class AuditLogsService {
     return this.auditLogsRepository.save(auditLog);
   }
 
-  async findAll(_userId: number, userRole: UserRole): Promise<AuditLog[]> {
+  async findAll(_userId: string, userRole: UserRole): Promise<AuditLog[]> {
     // Only admins can view all audit logs
     if (userRole !== UserRole.DOCTOR) {
       throw new ForbiddenException('Access denied');
@@ -37,8 +37,8 @@ export class AuditLogsService {
   }
 
   async findOne(
-    id: number,
-    _userId: number,
+    id: string,
+    _userId: string,
     userRole: UserRole,
   ): Promise<AuditLog> {
     // Only admins can view specific audit logs
@@ -58,7 +58,7 @@ export class AuditLogsService {
   }
 
   async logUserAction(
-    userId: number,
+    userId: string,
     userRole: UserRole,
     action: AuditAction,
     resourceType: ResourceType,
@@ -91,7 +91,7 @@ export class AuditLogsService {
     return this.auditLogsRepository.save(auditLog);
   }
 
-  async getLogsByUser(userId: number, userRole: UserRole): Promise<AuditLog[]> {
+  async getLogsByUser(userId: string, userRole: UserRole): Promise<AuditLog[]> {
     // Users can only see their own audit logs
     if (userRole === UserRole.DOCTOR) {
       return this.auditLogsRepository.find({
@@ -106,7 +106,7 @@ export class AuditLogsService {
   async getLogsByResource(
     resourceType: ResourceType,
     resourceId: string,
-    _userId: number,
+    _userId: string,
     userRole: UserRole,
   ): Promise<AuditLog[]> {
     // Only admins can view logs by resource
@@ -123,7 +123,7 @@ export class AuditLogsService {
   async getLogsByDateRange(
     startDate: Date,
     endDate: Date,
-    _userId: number,
+    _userId: string,
     userRole: UserRole,
   ): Promise<AuditLog[]> {
     // Only admins can view logs by date range
@@ -141,7 +141,7 @@ export class AuditLogsService {
 
   async getLogsByAction(
     action: AuditAction,
-    _userId: number,
+    _userId: string,
     userRole: UserRole,
   ): Promise<AuditLog[]> {
     // Only admins can view logs by action

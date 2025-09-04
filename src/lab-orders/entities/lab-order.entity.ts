@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -30,29 +31,61 @@ export enum TestType {
 
 @Entity('lab_orders')
 export class LabOrder {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ApiProperty({
+    description: 'Lab order ID (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
+  @ApiProperty({
+    description: 'ID of the patient (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440001',
+  })
   @Column()
   @Index()
-  patientId: number;
+  patientId: string;
 
+  @ApiProperty({
+    description: 'ID of the doctor who created the order (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440002',
+  })
   @Column()
   @Index()
-  doctorId: number;
+  doctorId: string;
 
+  @ApiProperty({
+    description: 'ID of the lab assigned to the order (UUID)',
+    example: '550e8400-e29b-41d4-a716-446655440003',
+    required: false,
+  })
   @Column({ nullable: true })
-  labId: number;
+  labId: string;
 
+  @ApiProperty({
+    description: 'Type of test to be performed',
+    enum: TestType,
+    example: TestType.BLOOD_TEST,
+  })
   @Column({
     type: 'enum',
     enum: TestType,
   })
   testType: TestType;
 
+  @ApiProperty({
+    description: 'Additional notes for the lab order',
+    example: 'Patient has diabetes, please check glucose levels',
+    required: false,
+  })
   @Column({ type: 'text', nullable: true })
   notes: string;
 
+  @ApiProperty({
+    description: 'Current status of the lab order',
+    enum: LabOrderStatus,
+    example: LabOrderStatus.PENDING,
+  })
   @Column({
     type: 'enum',
     enum: LabOrderStatus,
@@ -60,15 +93,33 @@ export class LabOrder {
   })
   status: LabOrderStatus;
 
+  @ApiProperty({
+    description: 'Scheduled date for the lab test',
+    example: '2025-09-15T10:00:00.000Z',
+    required: false,
+  })
   @Column({ type: 'timestamp', nullable: true })
   scheduledDate: Date;
 
+  @ApiProperty({
+    description: 'Date when the lab test was completed',
+    example: '2025-09-15T14:30:00.000Z',
+    required: false,
+  })
   @Column({ type: 'timestamp', nullable: true })
   completedDate: Date;
 
+  @ApiProperty({
+    description: 'Lab order creation timestamp',
+    example: '2025-09-02T13:14:13.633Z',
+  })
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty({
+    description: 'Lab order last update timestamp',
+    example: '2025-09-02T13:14:13.633Z',
+  })
   @UpdateDateColumn()
   updatedAt: Date;
 

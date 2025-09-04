@@ -48,7 +48,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
               statusCode: response.status,
               responseTime,
               userId: request?.user && request.user.id,
-              userRole: request.user!.role,
+              userRole: request?.user && request.user.role,
             },
             'HTTP',
           );
@@ -68,6 +68,8 @@ export class HttpLoggingInterceptor implements NestInterceptor {
               responseTime,
               userId: request?.user && request.user.id,
               userRole: request?.user && request.user.role,
+              error: error.message,
+              stack: error.stack,
             },
             'HTTP',
           );

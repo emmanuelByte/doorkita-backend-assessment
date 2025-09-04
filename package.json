@@ -6,11 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "npx nest build",
     "format": "prettier --write .",
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
+    "start": "npx nest start",
+    "start:dev": "npx nest start --watch",
+    "start:debug": "npx nest start --debug --watch",
     "start:prod": "node dist/main.js",
     "lint": "eslint --fix",
     "lint:check": "eslint .",
@@ -18,7 +18,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --watch",
+    "docker:dev:logs": "docker compose -f docker-compose.dev.yml logs -f app",
+    "docker:dev:down": "docker compose -f docker-compose.dev.yml down",
+    "docker:dev:restart": "docker compose -f docker-compose.dev.yml restart app",
+    "docker:prod": "docker compose up -d",
+    "docker:prod:logs": "docker compose logs -f app",
+    "docker:prod:down": "docker compose down",
+    "docker:watch": "docker compose up --watch"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
@@ -29,10 +37,15 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.0",
+    "@nestjs/throttler": "^6.4.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@types/uuid": "^10.0.0",
     "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "express-rate-limit": "^8.1.0",
+    "express-slow-down": "^3.0.0",
+    "helmet": "^8.1.0",
     "nestjs-pino": "^4.4.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -42,7 +55,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^0.3.26"
+    "typeorm": "^0.3.26",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

@@ -19,7 +19,7 @@ export class LabOrdersService {
 
   async create(
     createLabOrderDto: CreateLabOrderDto,
-    doctorId: number,
+    doctorId: string,
   ): Promise<LabOrder> {
     const labOrder = this.labOrdersRepository.create({
       ...createLabOrderDto,
@@ -29,7 +29,7 @@ export class LabOrdersService {
     return this.labOrdersRepository.save(labOrder);
   }
 
-  async findAll(userId: number, userRole: UserRole): Promise<LabOrder[]> {
+  async findAll(userId: string, userRole: UserRole): Promise<LabOrder[]> {
     switch (userRole) {
       case UserRole.DOCTOR:
         return this.labOrdersRepository.find({
@@ -52,8 +52,8 @@ export class LabOrdersService {
   }
 
   async findOne(
-    id: number,
-    userId: number,
+    id: string,
+    userId: string,
     userRole: UserRole,
   ): Promise<LabOrder> {
     const labOrder = await this.labOrdersRepository.findOne({
@@ -90,9 +90,9 @@ export class LabOrdersService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateLabOrderDto: UpdateLabOrderDto,
-    userId: number,
+    userId: string,
     userRole: UserRole,
   ): Promise<LabOrder> {
     const labOrder = await this.findOne(id, userId, userRole);
@@ -106,7 +106,7 @@ export class LabOrdersService {
     return this.labOrdersRepository.save(labOrder);
   }
 
-  async remove(id: number, userId: number, userRole: UserRole): Promise<void> {
+  async remove(id: string, userId: string, userRole: UserRole): Promise<void> {
     const labOrder = await this.findOne(id, userId, userRole);
 
     // Only doctors can delete lab orders
@@ -118,9 +118,9 @@ export class LabOrdersService {
   }
 
   async assignToLab(
-    id: number,
-    labId: number,
-    userId: number,
+    id: string,
+    labId: string,
+    userId: string,
     userRole: UserRole,
   ): Promise<LabOrder> {
     const labOrder = await this.findOne(id, userId, userRole);
@@ -137,7 +137,7 @@ export class LabOrdersService {
     return this.labOrdersRepository.save(labOrder);
   }
 
-  async getPendingOrders(labId: number): Promise<LabOrder[]> {
+  async getPendingOrders(labId: string): Promise<LabOrder[]> {
     return this.labOrdersRepository.find({
       where: {
         labId,
@@ -147,7 +147,7 @@ export class LabOrdersService {
     });
   }
 
-  async getInProgressOrders(labId: number): Promise<LabOrder[]> {
+  async getInProgressOrders(labId: string): Promise<LabOrder[]> {
     return this.labOrdersRepository.find({
       where: {
         labId,
@@ -158,7 +158,7 @@ export class LabOrdersService {
   }
 
   async updateLabOrderStatus(
-    id: number,
+    id: string,
     status: LabOrderStatus,
   ): Promise<LabOrder> {
     const labOrder = await this.labOrdersRepository.findOne({

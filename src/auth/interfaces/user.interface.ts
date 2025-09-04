@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   email: string;
   password: string;
   firstName: string;
@@ -10,7 +10,7 @@ export interface User {
 }
 
 export interface UserWithoutPassword {
-  id: number;
+  id: string;
   email: string;
   firstName: string;
   lastName: string;

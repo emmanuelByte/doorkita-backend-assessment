@@ -22,7 +22,7 @@ export class ResultsService {
 
   async create(
     createResultDto: CreateResultDto,
-    labId: number,
+    labId: string,
   ): Promise<Result> {
     // Check if lab order exists and is assigned to this lab
     await this.labOrdersService.findOne(
@@ -58,7 +58,7 @@ export class ResultsService {
     return savedResult;
   }
 
-  async findAll(userId: number, userRole: UserRole): Promise<Result[]> {
+  async findAll(userId: string, userRole: UserRole): Promise<Result[]> {
     switch (userRole) {
       case UserRole.LAB:
         return this.resultsRepository.find({
@@ -81,8 +81,8 @@ export class ResultsService {
   }
 
   async findOne(
-    id: number,
-    userId: number,
+    id: string,
+    userId: string,
     userRole: UserRole,
   ): Promise<Result> {
     const result = await this.resultsRepository.findOne({
@@ -119,9 +119,9 @@ export class ResultsService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateResultDto: UpdateResultDto,
-    userId: number,
+    userId: string,
     userRole: UserRole,
   ): Promise<Result> {
     const result = await this.findOne(id, userId, userRole);
@@ -135,7 +135,7 @@ export class ResultsService {
     return this.resultsRepository.save(result);
   }
 
-  async remove(id: number, userId: number, userRole: UserRole): Promise<void> {
+  async remove(id: string, userId: string, userRole: UserRole): Promise<void> {
     const result = await this.findOne(id, userId, userRole);
 
     // Only labs can delete results
@@ -147,8 +147,8 @@ export class ResultsService {
   }
 
   async getResultsByLabOrder(
-    labOrderId: number,
-    userId: number,
+    labOrderId: string,
+    userId: string,
     userRole: UserRole,
   ): Promise<Result[]> {
     // First check if user has access to the lab order
@@ -160,7 +160,7 @@ export class ResultsService {
     });
   }
 
-  async getPendingResults(labId: number): Promise<Result[]> {
+  async getPendingResults(labId: string): Promise<Result[]> {
     return this.resultsRepository.find({
       where: {
         labId,
@@ -170,7 +170,7 @@ export class ResultsService {
     });
   }
 
-  async getCompletedResults(labId: number): Promise<Result[]> {
+  async getCompletedResults(labId: string): Promise<Result[]> {
     return this.resultsRepository.find({
       where: {
         labId,

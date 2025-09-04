@@ -1,0 +1,75 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: doorkita-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: doorkita_db
+      POSTGRES_USER: doorkita_user
+      POSTGRES_PASSWORD: doorkita_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - doorkita-network
+
+  # Application (Development Mode with Watch)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: doorkita-app-dev
+    restart: unless-stopped
+    command: yarn start:dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: doorkita_db
+      DATABASE_USER: doorkita_user
+      DATABASE_PASSWORD: doorkita_password
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      # Development-specific environment variables
+      CHOKIDAR_USEPOLLING: 'true'
+      WATCHPACK_POLLING: 'true'
+    ports:
+      - '3000:3000'
+      - '9229:9229' # Node.js debug port
+    depends_on:
+      - postgres
+    networks:
+      - doorkita-network
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - '**/*.spec.ts'
+            - '**/*.test.ts'
+            - '**/node_modules/'
+        - action: sync
+          path: ./package.json
+          target: /app/package.json
+        - action: sync
+          path: ./yarn.lock
+          target: /app/yarn.lock
+        - action: sync+restart
+          path: ./nest-cli.json
+          target: /app/nest-cli.json
+        - action: sync+restart
+          path: ./tsconfig.json
+          target: /app/tsconfig.json
+        - action: sync+restart
+          path: ./eslint.config.mjs
+          target: /app/eslint.config.mjs
+
+volumes:
+  postgres_data:
+
+networks:
+  doorkita-network:
+    driver: bridge
