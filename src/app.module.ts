@@ -10,6 +10,7 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { AuditLog } from './audit-logs/entities/audit-log.entity';
 import { AuthModule } from './auth/auth.module';
 import { securityConfig } from './config/security.config';
+import { SeederModule } from './database/seeder/seeder.module';
 import { LabOrder } from './lab-orders/entities/lab-order.entity';
 import { LabOrdersModule } from './lab-orders/lab-orders.module';
 import { Result } from './results/entities/result.entity';
@@ -46,6 +47,7 @@ import { CustomThrottlerGuard } from './utils/rate-limit.guard';
     LabOrdersModule,
     ResultsModule,
     AuditLogsModule,
+    SeederModule,
   ],
   controllers: [AppController, HealthController],
   providers: [

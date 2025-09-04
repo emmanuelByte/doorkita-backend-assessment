@@ -275,6 +275,10 @@ Doorkita Healthcare Platform is designed to meet the complex needs of modern hea
 - `GET /audit-logs/action/:action` - Get logs by action type
 - `GET /audit-logs/recent` - Get recent logs
 
+#### 🌱 Database Seeder
+
+- `POST /seeder/seed` - Seed database with sample data (Doctor role required)
+
 #### 📊 Health & Monitoring
 
 - `GET /health` - Application health status
@@ -504,6 +508,57 @@ docker compose -f docker-compose.dev.yml exec app yarn test
 
 # Run tests in production container
 docker compose exec app yarn test
+```
+
+## 🌱 Database Seeding
+
+### Seeding Sample Data
+
+The application includes a comprehensive seeder that populates the database with realistic sample data for testing and demonstration purposes.
+
+```bash
+# Seed database with sample data (local)
+yarn seed
+
+# Seed database in Docker environment
+yarn seed:docker
+```
+
+### Sample Data Created
+
+The seeder creates:
+
+- **12 Users**:
+  - 3 Doctors: `dr.smith@doorkita.com`, `dr.johnson@doorkita.com`, `dr.williams@doorkita.com`
+  - 3 Labs: `lab.central@doorkita.com`, `lab.specialized@doorkita.com`, `lab.urgent@doorkita.com`
+  - 6 Patients: `john.doe@email.com`, `jane.smith@email.com`, `robert.wilson@email.com`, etc.
+
+- **8 Lab Orders** with various statuses (PENDING, IN_PROGRESS, COMPLETED)
+
+- **4 Completed Lab Results** with detailed findings and recommendations
+
+- **5 Audit Log Entries** tracking system activities
+
+### Default Credentials
+
+All seeded users have the same password: `StrongPass123!`
+
+### API Seeding
+
+You can also seed the database via API (requires doctor authentication):
+
+```bash
+# Login as a doctor first
+curl -X POST http://13.48.195.146:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "dr.smith@doorkita.com",
+    "password": "StrongPass123!"
+  }'
+
+# Use the JWT token to seed the database
+curl -X POST http://13.48.195.146:3000/seeder/seed \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 ### Test Examples
@@ -745,6 +800,8 @@ curl http://13.48.195.146:3000/health/db
 | `yarn lint`           | Run ESLint with auto-fix                      |
 | `yarn lint:check`     | Check code with ESLint                        |
 | `yarn format`         | Format code with Prettier                     |
+| `yarn seed`           | Seed database with sample data                |
+| `yarn seed:docker`    | Seed database in Docker environment           |
 | `npm run docker:dev`  | Start development environment with hot reload |
 | `npm run docker:prod` | Start production environment                  |
 
