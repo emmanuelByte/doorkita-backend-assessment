@@ -13,8 +13,13 @@ import { ValidationPipe } from './utils/validation.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {});
 
-  // Security middleware
-  app.use(helmet(securityConfig.helmet));
+  // Security middleware (with CSP disabled for Swagger UI)
+  app.use(
+    helmet({
+      ...securityConfig.helmet,
+      contentSecurityPolicy: false, // Disable CSP for Swagger UI compatibility
+    }),
+  );
 
   // CORS configuration
   app.enableCors(securityConfig.cors);

@@ -16,6 +16,7 @@ export const securityConfig = {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || [
       'http://localhost:3000',
       'http://localhost:3001',
+      'http://13.48.195.146:3000',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -28,9 +29,15 @@ export const securityConfig = {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+        imgSrc: ["'self'", 'data:', 'https:', 'https://cdn.jsdelivr.net'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        connectSrc: ["'self'"],
+        frameSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        manifestSrc: ["'self'"],
       },
     },
     crossOriginEmbedderPolicy: false,

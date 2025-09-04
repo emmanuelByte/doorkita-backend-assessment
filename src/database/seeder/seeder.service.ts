@@ -58,10 +58,31 @@ export class SeederService {
 
   private async clearData(): Promise<void> {
     this.logger.log('Clearing existing data...');
-    await this.auditLogRepository.delete({});
-    await this.resultRepository.delete({});
-    await this.labOrderRepository.delete({});
-    await this.userRepository.delete({});
+    // Use query runner to handle foreign key constraints properly
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Disable foreign key checks temporarily
+      await queryRunner.query('SET session_replication_role = replica;');
+
+      // Clear all tables
+      await queryRunner.query(
+        'TRUNCATE TABLE audit_logs, results, lab_orders, users RESTART IDENTITY CASCADE;',
+      );
+
+      // Re-enable foreign key checks
+      await queryRunner.query('SET session_replication_role = DEFAULT;');
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async seedUsers(): Promise<User[]> {
@@ -280,6 +301,12 @@ export class SeederService {
       (order) => order.status === LabOrderStatus.COMPLETED,
     );
 
+    // Only create results if we have completed orders
+    if (completedOrders.length === 0) {
+      this.logger.log('No completed orders found, skipping results seeding');
+      return;
+    }
+
     const results = [
       {
         labOrderId: completedOrders[0].id,
@@ -293,9 +320,13 @@ export class SeederService {
         recommendations:
           'Continue current medications. Follow up in 6 months for routine screening.',
       },
-      {
-        labOrderId: completedOrders[2].id,
-        labId: labs[2].id,
+    ];
+
+    // Add more results if we have more completed orders
+    if (completedOrders.length > 1) {
+      results.push({
+        labOrderId: completedOrders[1].id,
+        labId: labs[1]?.id || labs[0].id,
         resultText: 'Normal chest X-ray',
         comments: 'No acute cardiopulmonary findings',
         status: ResultStatus.COMPLETED,
@@ -304,10 +335,13 @@ export class SeederService {
           'Heart size normal. Clear lung fields. No evidence of pneumonia, pleural effusion, or pneumothorax.',
         recommendations:
           'No immediate intervention required. Follow up as clinically indicated.',
-      },
-      {
-        labOrderId: completedOrders[4].id,
-        labId: labs[1].id,
+      });
+    }
+
+    if (completedOrders.length > 2) {
+      results.push({
+        labOrderId: completedOrders[2].id,
+        labId: labs[2]?.id || labs[0].id,
         resultText: 'Normal brain MRI',
         comments: 'No significant abnormalities detected',
         status: ResultStatus.COMPLETED,
@@ -316,9 +350,12 @@ export class SeederService {
           'Normal brain parenchyma. No mass lesions, hemorrhage, or acute infarcts. Ventricles and sulci normal in size.',
         recommendations:
           'Continue current treatment plan. No neurological intervention required.',
-      },
-      {
-        labOrderId: completedOrders[7].id,
+      });
+    }
+
+    if (completedOrders.length > 3) {
+      results.push({
+        labOrderId: completedOrders[3].id,
         labId: labs[0].id,
         resultText: 'Normal metabolic panel',
         comments: 'All electrolytes within normal limits',
@@ -328,8 +365,8 @@ export class SeederService {
           'Sodium 140 mEq/L, Potassium 4.0 mEq/L, Chloride 102 mEq/L, CO2 24 mEq/L. Glucose 92 mg/dL, BUN 12 mg/dL, Creatinine 0.8 mg/dL.',
         recommendations:
           'Maintain current diet and hydration. No medication adjustments needed.',
-      },
-    ];
+      });
+    }
 
     const savedResults = await this.resultRepository.save(results);
     this.logger.log(`Created ${savedResults.length} lab results`);
