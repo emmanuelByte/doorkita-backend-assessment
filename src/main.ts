@@ -53,6 +53,8 @@ async function bootstrap() {
     .setTitle('Doorkita Healthcare API')
     .setDescription('A healthcare platform API for doctors, patients, and labs')
     .setVersion('1.0')
+    .addServer('http://localhost:3000', 'Local Development')
+    .addServer('http://13.48.195.146:3000', 'Production')
     .addBearerAuth(
       {
         type: 'http',

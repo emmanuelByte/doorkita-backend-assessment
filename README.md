@@ -14,6 +14,14 @@ Doorkita Healthcare Platform is designed to meet the complex needs of modern hea
 - **🛡️ Enterprise Security** with rate limiting, DDoS protection, and security headers
 - **📊 Health Monitoring** with real-time status and performance metrics
 
+## 🌐 Live Demo
+
+**Production Environment**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
+
+- **API Documentation**: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
+- **Health Check**: [http://13.48.195.146:3000/health](http://13.48.195.146:3000/health)
+- **Security Status**: [http://13.48.195.146:3000/health/security](http://13.48.195.146:3000/health/security)
+
 ## ✨ Key Features
 
 ### 🔐 Authentication & Authorization
@@ -215,7 +223,8 @@ Doorkita Healthcare Platform is designed to meet the complex needs of modern hea
 
 ### Swagger UI
 
-Access the interactive API documentation at: `http://localhost:3000/api/docs`
+**Local Development**: `http://localhost:3000/api/docs`
+**Production**: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
 
 ### API Endpoints Overview
 
@@ -501,6 +510,8 @@ docker compose exec app yarn test
 
 #### Authentication Test
 
+**Local Development**:
+
 ```bash
 # Register a new user
 curl -X POST http://localhost:3000/auth/register \
@@ -522,7 +533,32 @@ curl -X POST http://localhost:3000/auth/login \
   }'
 ```
 
+**Production**:
+
+```bash
+# Register a new user
+curl -X POST http://13.48.195.146:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "doctor@example.com",
+    "password": "StrongPass123!",
+    "firstName": "John",
+    "lastName": "Doe",
+    "role": "doctor"
+  }'
+
+# Login
+curl -X POST http://13.48.195.146:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "doctor@example.com",
+    "password": "StrongPass123!"
+  }'
+```
+
 #### Lab Order Test
+
+**Local Development**:
 
 ```bash
 # Create lab order (requires doctor token)
@@ -530,7 +566,22 @@ curl -X POST http://localhost:3000/lab-orders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
-    "patientId": 1,
+    "patientId": "550e8400-e29b-41d4-a716-446655440001",
+    "testType": "blood_test",
+    "notes": "Routine blood work",
+    "scheduledDate": "2025-09-15T10:00:00Z"
+  }'
+```
+
+**Production**:
+
+```bash
+# Create lab order (requires doctor token)
+curl -X POST http://13.48.195.146:3000/lab-orders \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "patientId": "550e8400-e29b-41d4-a716-446655440001",
     "testType": "blood_test",
     "notes": "Routine blood work",
     "scheduledDate": "2025-09-15T10:00:00Z"
@@ -624,6 +675,8 @@ docker compose -f docker-compose.dev.yml exec app sh
 
 ### Health Endpoints
 
+**Local Development**:
+
 ```bash
 # Application health
 curl http://localhost:3000/health
@@ -633,6 +686,19 @@ curl http://localhost:3000/health/security
 
 # Database connectivity
 curl http://localhost:3000/health/db
+```
+
+**Production**:
+
+```bash
+# Application health
+curl http://13.48.195.146:3000/health
+
+# Security features status
+curl http://13.48.195.146:3000/health/security
+
+# Database connectivity
+curl http://13.48.195.146:3000/health/db
 ```
 
 ### Performance Metrics
@@ -719,6 +785,8 @@ export const securityConfig = {
 ## 🚀 Deployment
 
 ### Production Deployment
+
+**Live Production Environment**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
 
 1. **Environment Setup**
 
@@ -870,10 +938,13 @@ export const securityConfig = {
 
 ### Documentation
 
-- **API Documentation**: `/api/docs` (Swagger UI)
+- **API Documentation**:
+  - Local: `http://localhost:3000/api/docs`
+  - Production: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
 - **Security Documentation**: `SECURITY.md`
 - **Docker Documentation**: `docker-compose.yml`, `docker-compose.dev.yml`
 - **Development Setup**: `Dockerfile.dev`
+- **Live Demo**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
 
 ### Contact
 
