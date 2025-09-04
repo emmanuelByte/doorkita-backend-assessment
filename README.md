@@ -16,11 +16,11 @@ Doorkita Healthcare Platform is designed to meet the complex needs of modern hea
 
 ## 🌐 Live Demo
 
-**Production Environment**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
+**Production Environment**: [https://doorkit-assessment.ddns.net/](https://doorkit-assessment.ddns.net/)
 
-- **API Documentation**: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
-- **Health Check**: [http://13.48.195.146:3000/health](http://13.48.195.146:3000/health)
-- **Security Status**: [http://13.48.195.146:3000/health/security](http://13.48.195.146:3000/health/security)
+- **API Documentation**: [https://doorkit-assessment.ddns.net/api/docs](https://doorkit-assessment.ddns.net/api/docs)
+- **Health Check**: [https://doorkit-assessment.ddns.net/health](https://doorkit-assessment.ddns.net/health)
+- **Security Status**: [https://doorkit-assessment.ddns.net/health/security](https://doorkit-assessment.ddns.net/health/security)
 
 ## ✨ Key Features
 
@@ -224,7 +224,7 @@ Doorkita Healthcare Platform is designed to meet the complex needs of modern hea
 ### Swagger UI
 
 **Local Development**: `http://localhost:3000/api/docs`
-**Production**: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
+**Production**: [https://doorkit-assessment.ddns.net/api/docs](https://doorkit-assessment.ddns.net/api/docs)
 
 ### API Endpoints Overview
 
@@ -549,7 +549,7 @@ You can also seed the database via API (requires doctor authentication):
 
 ```bash
 # Login as a doctor first
-curl -X POST http://13.48.195.146:3000/auth/login \
+curl -X POST https://doorkit-assessment.ddns.net/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "dr.smith@doorkita.com",
@@ -557,7 +557,7 @@ curl -X POST http://13.48.195.146:3000/auth/login \
   }'
 
 # Use the JWT token to seed the database
-curl -X POST http://13.48.195.146:3000/seeder/seed \
+curl -X POST https://doorkit-assessment.ddns.net/seeder/seed \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -592,7 +592,7 @@ curl -X POST http://localhost:3000/auth/login \
 
 ```bash
 # Register a new user
-curl -X POST http://13.48.195.146:3000/auth/register \
+curl -X POST https://doorkit-assessment.ddns.net/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "doctor@example.com",
@@ -603,7 +603,7 @@ curl -X POST http://13.48.195.146:3000/auth/register \
   }'
 
 # Login
-curl -X POST http://13.48.195.146:3000/auth/login \
+curl -X POST https://doorkit-assessment.ddns.net/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "doctor@example.com",
@@ -632,7 +632,7 @@ curl -X POST http://localhost:3000/lab-orders \
 
 ```bash
 # Create lab order (requires doctor token)
-curl -X POST http://13.48.195.146:3000/lab-orders \
+curl -X POST https://doorkit-assessment.ddns.net/lab-orders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
@@ -747,13 +747,13 @@ curl http://localhost:3000/health/db
 
 ```bash
 # Application health
-curl http://13.48.195.146:3000/health
+curl https://doorkit-assessment.ddns.net/health
 
 # Security features status
-curl http://13.48.195.146:3000/health/security
+curl https://doorkit-assessment.ddns.net/health/security
 
 # Database connectivity
-curl http://13.48.195.146:3000/health/db
+curl https://doorkit-assessment.ddns.net/health/db
 ```
 
 ### Performance Metrics
@@ -843,7 +843,7 @@ export const securityConfig = {
 
 ### Production Deployment
 
-**Live Production Environment**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
+**Live Production Environment**: [https://doorkit-assessment.ddns.net/](https://doorkit-assessment.ddns.net/)
 
 1. **Environment Setup**
 
@@ -997,11 +997,11 @@ export const securityConfig = {
 
 - **API Documentation**:
   - Local: `http://localhost:3000/api/docs`
-  - Production: [http://13.48.195.146:3000/api/docs](http://13.48.195.146:3000/api/docs)
+  - Production: [https://doorkit-assessment.ddns.net/api/docs](https://doorkit-assessment.ddns.net/api/docs)
 - **Security Documentation**: `SECURITY.md`
 - **Docker Documentation**: `docker-compose.yml`, `docker-compose.dev.yml`
 - **Development Setup**: `Dockerfile.dev`
-- **Live Demo**: [http://13.48.195.146:3000/](http://13.48.195.146:3000/)
+- **Live Demo**: [https://doorkit-assessment.ddns.net/](https://doorkit-assessment.ddns.net/)
 
 ### Contact
 

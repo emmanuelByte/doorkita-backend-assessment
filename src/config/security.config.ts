@@ -16,7 +16,7 @@ export const securityConfig = {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || [
       'http://localhost:3000',
       'http://localhost:3001',
-      'http://13.48.195.146:3000',
+      'https://doorkit-assessment.ddns.net',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
